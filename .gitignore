@@ -96,6 +96,7 @@ fabric.properties
 ## Build generated
 ios/build/
 ios/DerivedData/
+ios/build/
 
 ## Various settings
 *.pbxuser
