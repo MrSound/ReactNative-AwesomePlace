@@ -24,7 +24,7 @@ class AuthScreen extends Component {
         controls: {
             email: {
                 value: "aa@a.com",
-                valid: false,
+                valid: true,
                 validationRules: {
                     isEmail: true
                 },
@@ -32,7 +32,7 @@ class AuthScreen extends Component {
             },
             password: {
                 value: "12345",
-                valid: false,
+                valid: true,
                 validationRules: {
                     minLength: 6
                 },
