@@ -2,6 +2,7 @@ import { View, Image, Text, StyleSheet, TouchableOpacity, Platform, Dimensions }
 import Icon from 'react-native-vector-icons/Ionicons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import MapView from 'react-native-maps';
 
 import { deletePlace } from '../../store/actions/index';
 
@@ -31,8 +32,27 @@ class PlaceDetail extends Component {
                 styles.container,
                 this.state.viewMode === "portrait" ? styles.portraitContainer : styles.lanscapeContainer
             ]}>
-                <View style={styles.subContainer}>
-                    <Image source={this.props.selectedPlace.image} style={styles.placeImage} />
+                <View style={styles.placeDetailContainer}>
+                    <View style={styles.subContainer}>
+                        <Image source={this.props.selectedPlace.image} style={styles.placeImage} />
+                    </View>
+                    <View style={styles.subContainer}>
+                        <MapView
+                            initialRegion={{
+                                ...this.props.selectedPlace.location,
+                                latitudeDelta: 0.0122, //รัศมี หรือ Zooming Level แกน y จะ fix เหมือน height
+                                longitudeDelta://แกน x หาตามอัตราส่วนตามความกว้างของหน้าจอ
+                                    Dimensions.get("window").width /
+                                    Dimensions.get("window").height *
+                                    0.0122
+                            }}
+                            style={styles.map}
+                        >
+                            <MapView.Marker
+                                coordinate={this.props.selectedPlace.location}
+                            />
+                        </MapView>
+                    </View>
                 </View>
                 <View style={styles.subContainer}>
                     <View>
@@ -62,14 +82,20 @@ const styles = StyleSheet.create({
     lanscapeContainer: {
         flexDirection: "row"
     },
+    placeDetailContainer: {
+        flex: 2
+    },
     placeImage: {
         width: "100%",
-        height: 200,
+        height: "100%",
     },
     placeName: {
         fontWeight: "bold",
         textAlign: "center",
         fontSize: 28
+    },
+    map: {
+        ...StyleSheet.absoluteFillObject
     },
     deleteButton: {
         alignItems: "center"
