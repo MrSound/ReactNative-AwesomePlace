@@ -29,6 +29,10 @@ export class SharePlace extends Component {
       location: {
         value: null,
         valid: false
+      },
+      image: {
+        value: null,
+        valid: false
       }
     }
   };
@@ -63,7 +67,11 @@ export class SharePlace extends Component {
   }
 
   placeAddedHandler = () => {
-    this.props.onAddPlace(this.state.controls.placeName.value, this.state.controls.location.value);
+    this.props.onAddPlace(
+      this.state.controls.placeName.value,
+      this.state.controls.location.value,
+      this.state.controls.image.value
+    );
   }
 
   locationPickedHandler = location => {
@@ -81,6 +89,21 @@ export class SharePlace extends Component {
     });
   }
 
+  imagePickedHandler = image => {
+    this.setState(prevState => {
+      return {
+        controls: {
+          ...prevState.controls,
+          image: {
+            ...prevState.controls.image,
+            value: image,
+            valid: true
+          }
+        }
+      };
+    });
+  }
+
   render() {
     return (
       <ScrollView>
@@ -88,7 +111,7 @@ export class SharePlace extends Component {
           <MainText>
             <HeadingText>Share Place with us!</HeadingText>
           </MainText>
-          <PickImage />
+          <PickImage onImagePicked={this.imagePickedHandler} />
           <PickLocation
             onLocationPick={this.locationPickedHandler}
           />
@@ -102,7 +125,8 @@ export class SharePlace extends Component {
               onPress={this.placeAddedHandler}
               disabled={
                 !this.state.controls.placeName.valid ||
-                !this.state.controls.location.valid
+                !this.state.controls.location.valid ||
+                !this.state.controls.image.valid
               }
             />
           </View>
@@ -122,7 +146,7 @@ const styles = StyleSheet.create({
 });
 const mapDispatchToProps = dispatch => {
   return {
-    onAddPlace: (placeName, location) => (dispatch(addPlace(placeName, location)))
+    onAddPlace: (placeName, location, image) => (dispatch(addPlace(placeName, location, image)))
   };
 }
 export default connect(null, mapDispatchToProps)(SharePlace);
