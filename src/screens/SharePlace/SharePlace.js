@@ -1,5 +1,9 @@
 import { connect } from 'react-redux';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Image } from 'react-native';
+import {
+  View, Text, TextInput, Button,
+  StyleSheet, ScrollView, Image,
+  ActivityIndicator
+} from 'react-native';
 import React, { Component } from 'react';
 
 import { addPlace } from '../../store/actions/index';
@@ -105,6 +109,20 @@ export class SharePlace extends Component {
   }
 
   render() {
+    let submitButton = (
+      <Button
+        title="Share the Place!"
+        onPress={this.placeAddedHandler}
+        disabled={
+          !this.state.controls.placeName.valid ||
+          !this.state.controls.location.valid ||
+          !this.state.controls.image.valid
+        }
+      />
+    );
+    if (this.props.isLoading) {
+      submitButton = <ActivityIndicator />
+    }
     return (
       <ScrollView>
         <View style={styles.container}>
@@ -119,17 +137,7 @@ export class SharePlace extends Component {
             placeData={this.state.controls.placeName}
             onChangeText={this.placeNameChangeHandler}
           />
-          <View style={styles.button}>
-            <Button
-              title="Share the Place!"
-              onPress={this.placeAddedHandler}
-              disabled={
-                !this.state.controls.placeName.valid ||
-                !this.state.controls.location.valid ||
-                !this.state.controls.image.valid
-              }
-            />
-          </View>
+          <View style={styles.button}>{submitButton}</View>
         </View>
       </ScrollView>
     )
@@ -144,9 +152,14 @@ const styles = StyleSheet.create({
     margin: 5
   }
 });
+const mapStateToProps = state => {
+  return {
+    isLoading: state.ui.isLoading
+  }
+}
 const mapDispatchToProps = dispatch => {
   return {
     onAddPlace: (placeName, location, image) => (dispatch(addPlace(placeName, location, image)))
   };
 }
-export default connect(null, mapDispatchToProps)(SharePlace);
+export default connect(mapStateToProps, mapDispatchToProps)(SharePlace);
